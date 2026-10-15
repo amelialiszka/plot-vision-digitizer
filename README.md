@@ -4,7 +4,7 @@ Z oryginalnego zbioru walidacyjnego PlotQA wyselekcjonowano pierwsze 30 wykresó
 
 Instrukcja odtworzenia zbioru danych:
 1. Pobierz i rozpakuj podzbiór walidacyjny PlotQA. Oczekiwana struktura rozpakowanego folderu:
-
+'''text
    dataforsolvroimages/
    ├── annotations/
    │   └── annotations.json
@@ -13,6 +13,7 @@ Instrukcja odtworzenia zbioru danych:
            ├── 0.png
            ├── 1.png
            └── ...
+'''
 
 2. Uruchom download_data.py, podajac sciezke do rozpakowanego folderu jako argument:
 
