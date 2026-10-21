@@ -42,7 +42,7 @@ def detect_dots(img):
                 if M["m00"] != 0:
                     cx = int(M["m10"] / M["m00"])
                     cy = int(M["m01"] / M["m00"])
-                    detected_centers.append((cx, cy))
+                    detected_centers.append({"x": cx, "y": cy})
     else:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         thresh = cv2.adaptiveThreshold(
@@ -105,28 +105,28 @@ def detect_dots(img):
                 if M["m00"] != 0:
                     cx = int(M["m10"] / M["m00"])
                     cy = int(M["m01"] / M["m00"])
-                    detected_centers.append((cx, cy))
+                    detected_centers.append({"x": cx, "y": cy})
 
-    detected_centers.sort(key=lambda p: p[0])
+    detected_centers.sort(key=lambda p: p["x"])
     return detected_centers
 
 
 def save_results(points, output_path, format_type):
     if format_type == "json":
-        data = [{"x": px, "y": py} for px, py in points]
         with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
+            json.dump(points, f, indent=4)
     elif format_type == "csv":
         with open(output_path, "w", encoding="utf-8") as f:
             f.write("x,y\n")
-            for px, py in points:
-                f.write(f"{px},{py}\n")
+            for pt in points:
+                f.write(f"{pt['x']},{pt['y']}\n")
 
 
 def visualize_and_save(img, points, viz_path):
     img_result = img.copy()
 
-    for cx, cy in points:
+    for pt in points:
+        cx, cy = pt["x"], pt["y"]
         cv2.circle(img_result, (cx, cy), 6, (0, 0, 255), 2)
         cv2.circle(img_result, (cx, cy), 2, (0, 255, 0), -1)
 
