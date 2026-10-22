@@ -5,5 +5,4 @@ venv/
 ipynb_checkpoints/
 .DS_Store
 .vscode/
-data/sample_images/
-data/annotations.json
+__pycache__
