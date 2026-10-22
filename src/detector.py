@@ -170,6 +170,10 @@ def main():
 
     img = cv2.imread(args.image)
 
+    if img is None:
+        print(f'nie udalo sie wczytac pliku {args.image}')
+        return
+
     points = detect_dots(img)
 
     out_file = f"{args.output}.{args.format}"

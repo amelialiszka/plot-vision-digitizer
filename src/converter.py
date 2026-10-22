@@ -1,6 +1,22 @@
 import csv
 import json
 import numpy as np
+import os
+
+
+def _safe_float(val):
+    if isinstance(val, (int, float)):
+        return float(val)
+    return float(str(val).replace(",", "").strip())
+
+
+def _sort_key(p):
+    val = p["x"]
+    try:
+        return (0, float(val))
+    except (ValueError, TypeError):
+        return (1, str(val))
+
 
 def extract_calibration_points(calibration_config):
     y_rule = calibration_config["y_axis"]["rule"]["bbox"]
@@ -24,7 +40,7 @@ def map_pixels_to_actual_values(pixels_list, calibration_config):
 
     y_ticks = calibration_config["y_axis"]["major_ticks"]
     y_bboxes = y_ticks["bboxes"]
-    y_vals = [float(v) for v in y_ticks["values"]]
+    y_vals = [_safe_float(v) for v in y_ticks["values"]]
     y_pixs = [b["y"] + b["h"] / 2 for b in y_bboxes]
 
     poly_y = np.polyfit(y_pixs, y_vals, 1)
@@ -40,6 +56,9 @@ def map_pixels_to_actual_values(pixels_list, calibration_config):
 
     x_pix_unique = list(unique_x.keys())
 
+    if not x_pix_unique:
+        return []
+
     mapped_points = []
     for pt in pixels_list:
         cx, cy = pt["x"], pt["y"]
@@ -54,22 +73,26 @@ def map_pixels_to_actual_values(pixels_list, calibration_config):
 
         mapped_points.append({"x": x_val, "y": round(y_val, 3)})
 
-    mapped_points.sort(key=lambda p: float(p["x"]) if str(p["x"]).replace('.', '', 1).isdigit() else str(p["x"]))
-
+    mapped_points.sort(key=_sort_key)
     return mapped_points
 
 
 def export_to_json(mapped_points, filepath):
-    with open(filepath, 'w', encoding='utf-8') as f:
+    out_dir = os.path.dirname(filepath)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
+    with open(filepath, "w", encoding="utf-8") as f:
         json.dump(mapped_points, f, indent=4, ensure_ascii=False)
 
 
 def export_to_csv(mapped_points, filepath):
     if not mapped_points:
         return
-        
+    out_dir = os.path.dirname(filepath)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     keys = ["x", "y"]
-    with open(filepath, 'w', newline='', encoding='utf-8') as f:
+    with open(filepath, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=keys)
         writer.writeheader()
         writer.writerows(mapped_points)
