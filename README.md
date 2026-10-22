@@ -78,7 +78,7 @@ python src/main.py --image data/sample_images/4435.png --config data/sample_anno
 
 * `comparison_result.png` – wizualizacja zestawiająca oryginalny obrazek z odtworzonym wykresem (GT vs Pred).
 
-## 📓 Notatniki Analityczne (`notebooks/`)
+## Notatniki Analityczne (`notebooks/`)
 
 Cały proces badawczy oraz wnioski zostały udokumentowane w katalogu `notebooks/`:
 
@@ -88,7 +88,7 @@ Cały proces badawczy oraz wnioski zostały udokumentowane w katalogu `notebooks
 
 * **`raport.ipynb`** – kompletna ewaluacja (Precision, Recall, F1, MAE), analiza przypadków brzegowych oraz wnioski końcowe.
 
-## 💡 Opis Rozwiązania i Architektura
+## Opis Rozwiązania i Architektura
 
 ### 1. Detekcja Markerów (`detector.py`)
 
@@ -110,7 +110,7 @@ Detektor automatycznie rozpoznaje charakterystykę obrazu:
 
 * **Automatyzacja:** Detekcja punktów, segmentacja markerów od tła/siatki, dopasowanie do najbliższych etykiet i przeliczenie współrzędnych odbywa się w 100% automatycznie.
 
-## 🎯 Zbiór Danych (PlotQA Subset)
+## Zbiór Danych (PlotQA Subset)
 
 Do analizy i oceny wyselekcjonowano **30 wykresów** typu `dot_line` ze zbioru walidacyjnego PlotQA z zachowaniem stratyfikacji pod kątem kolorystyki:
 
@@ -120,7 +120,7 @@ Do analizy i oceny wyselekcjonowano **30 wykresów** typu `dot_line` ze zbioru w
 
 * **Zbiór Testowy (TEST - 20 obrazów):** 17 kolorowych, 3 monochromatyczne (użyty do końcowej ewaluacji).
 
-## 📈 Metryki Ewaluacji i Wnioski Końcowe
+## Metryki Ewaluacji i Wnioski Końcowe
 
 Dopasowanie przewidywanych punktów do referencyjnych realizowane jest przy użyciu **Algorytmu Węgierskiego** z progiem tolerancji równym **0.2% rozpiętości wymiarów obrazu**:
 
@@ -128,7 +128,7 @@ Dopasowanie przewidywanych punktów do referencyjnych realizowane jest przy uży
 
 Analiza przypadków z wykrytymi odchyleniami wskazuje, że drobne błędy $\text{MAE}_Y$ nie wynikają z problemów z samą detekcją kropek, lecz ze sposobu kalibracji osi zaczerpniętego z adnotacji PlotQA. Do wyznaczenia funkcji skalującej użyto środków geometrycznych ($y + h/2$) ramek zawierających etykiety tekstowe na osi. Środek pola tekstowego rzadko pokrywa się idealnie co do piksela z cienką linią podziałki na osi, co wprowadza minimalne, systematyczne przesunięcia wyliczonej funkcji regresji.
 
-### 2. Gdzie rozwiązanie przestaje działać (Ograniczenia):
+### 2. Gdzie rozwiązanie przestaje działać:
 
 * **Obecność linii łączących w wykresach `dot_line`:** Narysowanie ciągłej linii łączącej kropki może fizycznie scalać markery z linią w jeden spójny kontur, przez co filtry geometrii odrzucają obiekt ze względu na spadek kolistości.
 
@@ -136,7 +136,7 @@ Analiza przypadków z wykrytymi odchyleniami wskazuje, że drobne błędy $\text
 
 * **Nieliniowe osie liczbowe:** Zastosowanie wielomianu pierwszego stopnia (`np.polyfit`) ogranicza model wyłącznie do osi o skalowaniu liniowym.
 
-### 3. Co zmienił(a)byś w kolejnym podejściu?
+### 3. Co zmieniłabym w kolejnym podejściu?
 
 * **Przejście na Deep Learning:** Zastąpienie klasycznych filtrów OpenCV dedykowanym modelem detekcji obiektów (np. YOLOv8-pose) w celu uniezależnienia systemu od kolorystyki, tła i kształtu markerów.
 
